@@ -1,0 +1,51 @@
+{
+	"version": 2,
+	"configurePresets": [
+		{
+			"name": "common",
+			"hidden": true,
+			"generator": "Ninja",
+			"cacheVariables": {}
+		},
+		{
+			"name": "debug",
+			"inherits": "common",
+			"binaryDir": "build-debug",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"Vulkan_INCLUDE_DIR": "C:/Users/Pancreas/Desktop/Hui/Vulkan/Include",
+				"Vulkan_LIBRARY": "C:/Users/Pancreas/Desktop/Hui/Vulkan/Lib/vulkan-1.lib",
+				"Vulkan_GLSLC_EXECUTABLE": "C:/Users/Pancreas/Desktop/Hui/Vulkan/Bin/glslc.exe",
+				"Vulkan_GLSLANG_VALIDATOR_EXECUTABLE": "C:/Users/Pancreas/Desktop/Hui/Vulkan/Bin/glslangValidator.exe"
+			}
+		},
+		{
+			"name": "release",
+			"inherits": "common",
+			"binaryDir": "build-release",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		},
+		{
+			"name": "msvc-debug",
+			"inherits": "debug",
+			"generator": "Visual Studio 17 2022"
+		},
+		{
+			"name": "msvc-release",
+			"inherits": "release",
+			"generator": "Visual Studio 17 2022"
+		},
+		{
+			"name": "mingw-debug",
+			"inherits": "debug",
+			"generator": "MinGW Makefiles"
+		},
+		{
+			"name": "mingw-release",
+			"inherits": "release",
+			"generator": "MinGW Makefiles"
+		}
+	]
+}
