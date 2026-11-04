@@ -1,4 +1,4 @@
-# 🌋 Vulkan Starter App
+#  Vulkan Starter App
 
 ## Getting started
 
