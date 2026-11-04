@@ -1,66 +1,15 @@
-# 🌋 Vulkan Starter App
+# Лабораторная работа №2: камера и освещение
 
-## Getting started
+Вариант 5 — сфера. Работа сделана на основе первой лабораторной (C++, Vulkan, GLFW, Dear ImGui) на оценку 4: базовое задание и первые три дополнительных задания.
 
-You need C++ compiler, Vulkan SDK and CMake installed before you can build this project.
+В сцене пол и три сферы из первой лабы, одна из них, как и раньше, двигается по кругу. Освещение считается во фрагментном шейдере по модели Блинна-Фонга, как в лекции 4: к рассеянному свету прибавляется вклад каждого источника `(albedo + specular · (n·h)^alpha) · (n·l) · E`, где `h` — половинчатый вектор между направлением на камеру и направлением на источник. Нормали вершин сферы считаются процедурно: у сферы с центром в нуле нормаль совпадает с позицией вершины.
 
-This project uses C++20 standard and thus requires either of those compilers:
-- GCC 10.X
-- Clang 10
-- Microsoft Visual Studio 2019
+Все параметры меняются в окне Lab 2. У камеры можно задать позицию, поворот (yaw и pitch), угол обзора и тип проекции. Матрица вида считается как обратная к матрице «модели» камеры. У каждого объекта можно поменять позицию, поворот, масштаб и материал: альбедо, цвет блика и коэффициент блеска. Также настраиваются рассеянный свет (цвет и интенсивность) и направленный источник (направление, цвет, интенсивность).
 
-This is officially tested on *Windows* and *GNU/Linux platforms*, no *macOS* support yet.
-If you have a working macOS solution of this code, consider submitting a PR so others
-can build this example code without a hassle!
+Данные для шейдеров разделены на два набора дескрипторов, как на слайде 31. В наборе сцены (set 0) лежит uniform-буфер с матрицей view-projection, позицией камеры, направленным и рассеянным светом и количеством источников, а также два storage-буфера с массивами точечных источников и прожекторов. В наборе модели (set 1) лежат матрица модели и материал, такой набор есть у каждого объекта. Массивы источников в шейдере объявлены без размера, а на стороне программы storage-буфер увеличивается, если источников стало больше, чем помещается.
 
-<ins>**1. Downloading the repository**</ins>
+Точечные источники и прожекторы добавляются кнопками Add и удаляются кнопкой Remove, у каждого можно поменять позицию, цвет и интенсивность, у прожектора ещё направление и два угла. Свет от них затухает по закону обратных квадратов (делится на квадрат расстояния). У прожектора внутри внутреннего угла полная яркость, за внешним света нет, а между ними яркость плавно падает, поэтому край пятна мягкий, если внешний угол больше внутреннего.
 
-Start by cloning the repository with `git clone --depth 1 https://github.com/vladeemerr/vulkan-starter-app`
+Шейдеры лежат в папке shaders, а в программу они попадают уже скомпилированными из файла source/shaders_spirv.hpp. Если поменять шейдер, этот файл нужно пересоздать командой `glslc -mfmt=c sphere.vert` (и так же для sphere.frag).
 
-This repository does not contain any submodules, it utilizes CMake's `FetchContent` feature instead.
-
-<ins>**2. Configuring the project**</ins>
-
-Run either one of the CMake lines to download dependencies and configure the project:
-
-```bash
-cmake --preset debug       # for GNU/Linux (GCC/Clang)
-cmake --preset msvc-debug  # for Windows (Visual Studio 2019)
-cmake --preset mingw-debug # for Windows (MinGW)
-```
-
-If you wish to build in `release` mode, change `debug` to `release`.
-
-If changes are made (added/removed files), or if you want to regenerate project files, rerun the command above.
-
-<ins>**3. Building**</ins>
-
-To build the project, use the line below. You are most likely using `debug` preset, so
-the directory that will eventually contain your build files is named `build-debug`.
-
-Likewise for `release` that directory will be named `build-release`
-
-Run one those commands, depending on which preset you chose:
-
-```bash
-cmake --build build-debug --parallel # for debug
-cmake --build build-release --parallel # for release
-```
-
-### Running
-
-`build-*` directory will contain the executable in one of the subdirectories after successful build.
-
-For `msvc-{debug|release}` builds output subdirectory is set to `Debug` or `Release` respectively.
-For other configurations output subdirectory is set to `vulkan-starter-app`.
-
-**Make sure your working directory is set to the project root!**
-Project root is where this README file resides. Otherwise, the
-code responsible for loading shaders or other resources from files will fail,
-because relative paths are used.
-
-### Compiling shaders
-
-`CMakeLists.txt` has a build recipe for compiling shader files
-along with an application. Look for a comment in this file to see
-how to compile your shaders.
+Собирается так же, как первая лаба: в Visual Studio открыть папку проекта (Файл → Открыть → Папка), дождаться настройки CMake, собрать и запустить vulkan-starter-app.exe.
